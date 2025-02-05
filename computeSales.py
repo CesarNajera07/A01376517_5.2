@@ -1,3 +1,8 @@
+"""
+computeSales.py Calcula el costo total de las ventas basado en un catálogo.
+Lee archivos JSON, procesa guarda los resultados en un archivo .txt.
+"""
+
 import json
 import sys
 import time
@@ -7,10 +12,13 @@ import os
 def load_json(file_path):
     """Carga un archivo JSON y maneja posibles errores."""
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, 'r', encoding='utf-8') as file:
             return json.load(file)
-    except Exception as e:
-        print(f"Error al cargar el archivo {file_path}: {e}")
+    except FileNotFoundError:
+        print(f"Error: Archivo no encontrado {file_path}")
+        sys.exit(1)
+    except json.JSONDecodeError:
+        print(f"Error: Archivo JSON inválido {file_path}")
         sys.exit(1)
 
 
@@ -30,7 +38,7 @@ def compute_total_cost(sales, price_catalogue):
             price = product.get('price', 0)
             total_cost += price * quantity
         else:
-            print(f"Advertencia:'{product_name}' no encontrado en catálogo.")
+            print(f"Advertencia: '{product_name}' no encontrado en catálogo.")
     return total_cost
 
 
@@ -49,6 +57,7 @@ def process_sales(price_catalogue_file, sales_file):
 
 
 def main():
+    """Función principal que coordina la ejecución del programa."""
     if len(sys.argv) != 5:
         print("Uso incorrecto. El formato correcto es:")
         print("python computeSales.py priceCatalogue.json "
@@ -59,7 +68,7 @@ def main():
     sales_files = sys.argv[2:]  # Los tres archivos de ventas
 
     # Abrir el archivo de resultados para escribir
-    with open("SalesResults.txt", "w") as result_file:
+    with open("SalesResults.txt", "w", encoding="utf-8") as result_file:
         # Escribir "TOTAL" en la segunda columna
         result_file.write(f"{'':<8}TOTAL\n")
         # Variable para guardar los resultados a imprimir más tarde
